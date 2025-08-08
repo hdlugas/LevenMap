@@ -1,4 +1,4 @@
-# levenmap: alignment of small RNA-sequencing data to database of non-coding RNAs (ncRNAs)
+# levenmap: alignment of small RNA-sequencing data to database of non-coding RNAs
 
 ## Table of Contents
 - [1. Motivation for levenmap](#motivation)
@@ -71,93 +71,93 @@ cutadapt \
 
 <a name="build-ref-db"></a>
 ### 3.2. Build reference database
-Building a reference database from the reference FASTA file greatly increases speed and is a necessary step in using levenmap. If the length of the shortest/longest read in the reference FASTA file is S/L and the maximum number of mismatches allowed is N, then a FASTA file with all reads of length M-N to M+N for each M=S,S+1,S+2,...,L-2,L-1,L is created, resulting in (L-S)+1 FASTA files. For a given read in some sample's FASTQ file with length A, the specific FASTA file with all reads of length A-N to A+N is used as the reference to avoid regular expression matching with agrep on reference sequences that are either too short or too long to correspond to the given read. 
+Building a reference database from the reference FASTA file greatly increases speed and is a necessary step in using levenmap. If the length of the shortest/longest read in the reference FASTA file is S/L and the maximum number of mismatches allowed is N, then a FASTA file with all reads of length M-N to M+N for each M=S,S+1,S+2,...,L-2,L-1,L is created, resulting in (L-S)+1 FASTA files. For a given read in some sample's FASTQ file with length A, the specific FASTA file with all reads of length A-N to A+N is used as the reference to avoid computing the Levenshtein distance with reference sequences that are either too short or too long to correspond to the given read.
 
 To view the usage instructions and parameter descriptions of the script build_reference_database.sh, run:
 ```
-./build_reference_database.sh -h
+julia build_reference_database.jl --help
 ```
 
 The resulting message is:
 ```
-Usage: ./build_reference_database.sh --min-nucleotides <INT> --max-nucleotides <INT> -x <INT> -r <reference_FASTA_file> -o <output_directory>
+Help Message for build_reference_database.jl
 
-Builds reference database corresponding to a reference FASTA file. This step is necessary prior to running agrepNestAligner.
+Usage:
+  julia build_reference_database.jl --reference <path> --output <path> [--min_nucleotides <int>] [--max_nucleotides <int>] [--max_dist <float>]
 
-Options:
-  --min-nucleotides <INT>                          Integer value of the minimum number of nucleotides each reference sequence must contain to be considered, inclusive. Default = 18.
-  --max-nucleotides <INT>                          Integer value of the maximum number of nucleotides each reference sequence must contain to be considered, inclusive. Default = 30.
-  -x <maximum number of mismatches allowed>        Integer specifying the maximum number of mismatches allowed during alignment. Default = 0.
-  -r <reference_FASTA_file>                        Specifies the FASTA file of reference sequences. Mandatory argument.
-  -o <output_directory>                            Specifies the directory the reference database will be written to. Mandatory argument.
-  -h                                               Shows this help message.
+Arguments:
+  --reference          Path to FASTA file of reference ncRNAs (required)
+  --output             Path to output directory containing processed reference database (required)
+  --min_nucleotides    Minimum length (in units of nucleotides) of reference sequences to include in reference database (optional, Int, default = 12)
+  --max_nucleotides    Maximum length (in units of nucleotides) of reference sequences to include in reference database (optional, Int, default = 30)
+  --max_dist           Maximum Levenshtein distance allowed in alignment (optional, Int, default = 5)
+  --help               Show this help message
 ```
 
 For example, the following writes a reference database to $REFERENCE_ncRNA_DATABASE_DIRECTORY with reference ncRNA FASTA file $REFERENCE_ncRNAs_FASTA:
 ```
-./build_reference_database.sh \
-  --min-nucleotides 16 \
-  --max-nucleotides 120 \
-  -x 1 \
-  -r $REFERENCE_ncRNAS_FASTA \
-  -o $REFERENCE_ncRNA_DATABASE_DIRECTORY
+julia build_reference_database.jl \
+  --reference $REFERENCE_ncRNAs_FASTA \
+  --output $REFERENCE_ncRNA_DATABASE_DIRECTORY \
+  --min_nucleotides 16 \
+  --max_nucleotides 120 \
+  --max_dist 3
 ```
 
 <a name="run-aligner"></a>
 ### 3.3. Run levenmap
-Once the reference database is constructed, agrepNestAligner.sh can be used to align the reads of a given FASTQ file to the reference database. To view the usage instructions and parameter descriptions of the script agrepNestAligner.sh, run:
+Once the reference database is constructed, levenmap.jl can be used to align the reads of a given FASTQ file to the reference database. To view the usage instructions and parameter descriptions of the script levenmap.jl, run:
 ```
-./agrepNestAligner.sh -h
+julia levenmap.jl --help
 ```
 
 The resulting message is:
 ```
-Usage: ./agrepNestAligner.sh -x <INT> -@ <INT> -i <input_FASTQ_file> -r <reference_database_directory> -o <output_directory>
+Usage:
+  julia levenmap.jl --input_fastq <path> --reference <path> --output <path> [--max_dist <float>] [--threads <int>]
 
-Aligns reads in a given FASTQ file to a reference database of ncRNAs using agrep.
-
-Options:
-  -x <maximum number of mismatches allowed>        Integer specifying the maximum number of mismatches allowed during alignment. Default = 0.
-  -@ <number of threads>                           Integer specifying the number of threads to utilize. Default = 1.
-  -i <input_FASTQ_file>                            Specifies the input FASTQ file. Mandatory argument.
-  -r <reference_database_directory>                Path to the directory containing the reference database created from build_reference_database.sh. Mandatory argument.
-  -o <output_directory>                            Specifies the directory the output TXT file should be written to. Mandatory argument.
-  -h                                               Shows this help message.
+Arguments:
+  --input_fastq      Path to input FASTQ file (required)
+  --reference        Path to reference database output from build_reference_database.jl (required)
+  --output           Path to output TXT file (required)
+  --max_dist         Maximum Levenshtein distance allowed in alignment (optional, Int, default = 1)
+  --threads          Number of threads (optional, Int, default = 1)
+  --help             Show this help message
 ```
 
-For example, the following aligns the FASTA file $POST_CUTADAPT_FASTQ to the reference database $REFERENCE_ncRNA_DATABASE_DIRECTORY and writes the output to the directory $ALIGNMENT_OUTPUT_DIRECTORY:
+For example, the following aligns the FASTA file $POST_CUTADAPT_FASTQ to the reference database $REFERENCE_ncRNA_DATABASE_DIRECTORY allowing for at most 1 mismatch and writes the output alignment text file to $ALIGNMENT_OUTPUT:
 ```
-./agrepNestAligner.sh \
-  -x 1 \
-  -@ 1 \
-  -i $POST_CUTADAPT_FASTQ \
-  -r $REFERENCE_ncRNA_DATABASE_DIRECTORY \
-  -o $ALIGNMENT_OUTPUT_DIRECTORY
+julia ${CURRENT_DIRECTORY}/../levenmap.jl \
+  --input_fastq $POST_CUTADAPT_FASTQ \
+  --reference $REFERENCE_ncRNA_DATABASE_DIRECTORY \
+  --output ALIGNMENT_OUTPUT \
+  --max_dist 1
 ```
 
 <a name="create-count-matrix"></a>
 ### 3.4. Create count matrix
 Once all samples are aligned with output written to the directory $ALIGNMENT_OUTPUT_DIRECTORY, the alignment information is consolidated into a count matrix with rows corresponding to ncRNAs and columns corresponding to samples. To view the usage instructions and parameter description of the script create_count_matrix.sh, run:
 ```
-./create_count_matrix.sh -h
+julia create_count_matrix.jl --help
 ```
 
 The resulting message is:
 ```
-Usage: ./create_count_matrix.sh -i <input_directory>
+Help Message for create_count_matrix.jl
 
-Consolidates agrepNestAligner alignment information into count matrix with rows corresponding to ncRNAs and columns corresponding to samples. The tab-delimited text file count_matrix.txt will be written to the input_directory argument.
+Usage:
+  julia create_count_matrix.jl --input <path>
 
-Options:
-  -i <input_directory>                             Specifies the directory the agrepNestAligner output was written to. Mandatory argument.
-  -h                                               Shows this help message.
+Arguments:
+  --input_dir   Path to directory containing alignment output from all samples (required)
+  --help    Show this help message
 ```
 
 For example, the following writes the count matrix to the directory $ALIGNMENT_OUTPUT_DIRECTORY once all agrepNestAligner alignments have been written to $ALIGNMENT_OUTPUT_DIRECTORY:
 ```
-./create_count_matrix.sh -i $ALIGNMENT_OUTPUT_DIRECTORY
+julia create_count_matrix.jl --input_dir $ALIGNMENT_OUTPUT_DIRECTORY
 ```
 
 <a name="downstream-analysis"></a>
 ## 4. Downstream analysis
-Once the count matrix with rows corresponding to ncRNAs and columns corresponding to samples is computed, there are a variety of tools available which perform differential transcription analysis to identify ncRNAs transcribed in significantly different levels among sample groups of interest, most of which use negative binomial regression. Some options include DESeq2, edgeR, or limma.
+Once the count matrix with rows corresponding to ncRNAs and columns corresponding to samples is computed, there are a variety of tools available which perform differential transcription analysis to identify ncRNAs transcribed in significantly different levels among sample groups of interest. Some options include DESeq2, edgeR, or limma. Alternatively, one can also directly implement their desired hypothesis tests (after normalizing the count matrix) without the use of a package designed specifically for differential expression analysis.
