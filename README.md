@@ -1,6 +1,4 @@
-# levenmap
-
-Julia-based alignment algorithm designed specifically for aligning small RNA-sequencing data to database of non-coding RNAs (ncRNAs).
+# levenmap: alignment of small RNA-sequencing data to database of non-coding RNAs (ncRNAs)
 
 ## Table of Contents
 - [1. Motivation for levenmap](#motivation)
