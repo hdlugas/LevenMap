@@ -117,7 +117,6 @@ Threads.@threads for i in 1:length(read_list)
     current_references = all_references[length(read)]
     min_dist = typemax(Int)
     best_ref_names = String[]
-    best_match_direction = ""
     for (ref_name, ref_seq) in current_references
         d_fwd = evaluate(Levenshtein(), read, ref_seq)
         d_rev = evaluate(Levenshtein(), read_revcomp, ref_seq)
