@@ -6,6 +6,9 @@
 # get path to current working directory
 CURRENT_DIRECTORY=$(pwd)
 
+# create output directory
+mkdir -p ${CURRENT_DIRECTORY}/data/alignment_output/x1
+
 
 ########## build reference database ########## 
 julia ${CURRENT_DIRECTORY}/../build_reference_database.jl \
