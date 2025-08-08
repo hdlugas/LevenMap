@@ -121,22 +121,19 @@ Threads.@threads for i in 1:length(read_list)
     for (ref_name, ref_seq) in current_references
         d_fwd = evaluate(Levenshtein(), read, ref_seq)
         d_rev = evaluate(Levenshtein(), read_revcomp, ref_seq)
-
-	min_d = min(d_fwd, d_rev)
-
-	if min_d < min_dist
-	    min_dist = min_d
-	    empty!(best_ref_names)
-	    push!(best_ref_names, ref_name)
-	elseif min_d == min_dist
-	    push!(best_ref_names, ref_name)
-
+	    min_d = min(d_fwd, d_rev)
+	    if min_d < min_dist
+	        min_dist = min_d
+    	    empty!(best_ref_names)
+	        push!(best_ref_names, ref_name)
+	    elseif min_d == min_dist
+	        push!(best_ref_names, ref_name)
         end
     end
 
     if min_dist <= max_dist
         # Store results in thread-local vector to avoid race
-	ref_string = join(sort(unique(best_ref_names)), "&")
+	    ref_string = join(sort(unique(best_ref_names)), "&")
         push!(results_per_thread[thread_id], (read, ref_string, count))
     end
 end
