@@ -37,7 +37,7 @@ conda deactivate
 Alternatively, one can create a conda environment, activate it, and install each dependency with:
 ```
 conda create -n levenmap_env
-conda activate levenmap_
+conda activate levenmap_env
 conda install -c bioconda -c conda-forge umi_tools
 conda install bioconda::cutadapt
 ```
