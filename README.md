@@ -18,7 +18,33 @@ Common bioinformatics workflows which process small RNA-sequencing data typicall
 
 <a name="installation"></a>
 ## 2. Installation
-The dependencies of levenmap are tre-agrep, sed, and awk. However, if you would like to (i) extract the unique molecular identifier (UMI) sequences from reads and (ii) filter reads based on length (i.e. number of nucleotides) as is recommended by both us and Kapoor et al in "A bioinformatics approach to microRNA-sequencing analysis" ([https://www.sciencedirect.com/science/article/pii/S266591312030131X](https://www.sciencedirect.com/science/article/pii/S266591312030131X)), then umi_tools ([https://github.com/CGATOxford/UMI-tools](https://github.com/CGATOxford/UMI-tools)) and cutadapt ([https://cutadapt.readthedocs.io/en/stable/index.html](https://cutadapt.readthedocs.io/en/stable/index.html)) must also be installed. 
+The Julia packages required to run levenmap are ArgParse, DataStructures, FASTX, Glob, and StringDistances. These dependencies can be installed with the Julia command:
+```
+using Pkg; Pkg.add(["ArgParse", "FASTX", "DataStructures", "StringDistances", "Glob"])
+```
+
+However, if you would like to (i) extract the unique molecular identifier (UMI) sequences from reads and (ii) filter reads based on length (i.e. number of nucleotides) as is recommended by both us and Kapoor et al in "A bioinformatics approach to microRNA-sequencing analysis" ([https://www.sciencedirect.com/science/article/pii/S266591312030131X](https://www.sciencedirect.com/science/article/pii/S266591312030131X)), then umi_tools ([https://github.com/CGATOxford/UMI-tools](https://github.com/CGATOxford/UMI-tools)) and cutadapt ([https://cutadapt.readthedocs.io/en/stable/index.html](https://cutadapt.readthedocs.io/en/stable/index.html)) must also be installed. We recommend creating a conda environment with the necessary dependencies, which can be done by executing the following command once conda is installed on your system, you have downloaded this repository, and have navigated to the directory that contains the environment.yml file:
+```
+conda env create -f environment.yml
+```
+To activate the levenmap_env conda environment, run:
+```
+conda activate levenmap_env
+```
+To deactivate the levenmap_env conda environement, run:
+```
+conda deactivate
+```
+
+Alternatively, one can create a conda environment, activate it, and install each dependency with:
+```
+conda create -n levenmap_env
+conda activate levenmap_
+conda install -c bioconda -c conda-forge umi_tools
+conda install bioconda::cutadapt
+```
+
+For instructions on installing conda on your system, see [https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
 <a name="usage"></a>
 ## 3. Usage
@@ -47,7 +73,7 @@ cutadapt \
 
 <a name="build-ref-db"></a>
 ### 3.2. Build reference database
-Building a reference database from the reference FASTA file greatly increases speed and is a necessary step in using agrepNestAligner. If the length of the shortest/longest read in the reference FASTA file is S/L and the maximum number of mismatches allowed is N, then a FASTA file with all reads of length M-N to M+N for each M=S,S+1,S+2,...,L-2,L-1,L is created, resulting in (L-S)+1 FASTA files. For a given read in some sample's FASTQ file with length A, the specific FASTA file with all reads of length A-N to A+N is used as the reference to avoid regular expression matching with agrep on reference sequences that are either too short or too long to correspond to the given read. 
+Building a reference database from the reference FASTA file greatly increases speed and is a necessary step in using levenmap. If the length of the shortest/longest read in the reference FASTA file is S/L and the maximum number of mismatches allowed is N, then a FASTA file with all reads of length M-N to M+N for each M=S,S+1,S+2,...,L-2,L-1,L is created, resulting in (L-S)+1 FASTA files. For a given read in some sample's FASTQ file with length A, the specific FASTA file with all reads of length A-N to A+N is used as the reference to avoid regular expression matching with agrep on reference sequences that are either too short or too long to correspond to the given read. 
 
 To view the usage instructions and parameter descriptions of the script build_reference_database.sh, run:
 ```
