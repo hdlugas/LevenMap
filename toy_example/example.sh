@@ -119,7 +119,7 @@ echo ""
 
 
 ########## consolidate alignment information to create count matrix with rows corresponding to ncRNAs and columns corresponding to samples #########
-julia ${CURRENT_DIRECTORY}/../srccreate_count_matrix.jl \
+julia ${CURRENT_DIRECTORY}/../src/create_count_matrix.jl \
   --input_dir ${CURRENT_DIRECTORY}/data/alignment_output/x1/
 echo ""
 
