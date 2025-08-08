@@ -38,11 +38,14 @@ Alternatively, one can create a conda environment, activate it, and install each
 ```
 conda create -n levenmap_env
 conda activate levenmap_env
-conda install -c bioconda -c conda-forge umi_tools
-conda install bioconda::cutadapt
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+pip install cutadapt
+conda install umi_tools
 ```
 
-For instructions on installing conda on your system, see [https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
+Note that this assumes pip is installed on your system. For instructions on installing conda on your system, see [https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
 <a name="usage"></a>
 ## 3. Usage
