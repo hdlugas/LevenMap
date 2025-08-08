@@ -130,7 +130,7 @@ Arguments:
 
 For example, the following aligns the FASTA file $POST_CUTADAPT_FASTQ to the reference database $REFERENCE_ncRNA_DATABASE_DIRECTORY allowing for at most 1 mismatch and writes the output alignment text file to $ALIGNMENT_OUTPUT:
 ```
-julia ${CURRENT_DIRECTORY}/../levenmap.jl \
+julia levenmap.jl \
   --input_fastq $POST_CUTADAPT_FASTQ \
   --reference $REFERENCE_ncRNA_DATABASE_DIRECTORY \
   --output ALIGNMENT_OUTPUT \
