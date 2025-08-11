@@ -33,7 +33,6 @@ OUTPUT_BLAST=${CURRENT_DIRECTORY}/data/alignment_output/BLAST.sam
 
 
 
-
 ########## build reference database for each aligner ########## 
 julia ${CURRENT_DIRECTORY}/../src/build_reference_database.jl \
   --reference $REF_FASTA \
@@ -46,7 +45,6 @@ bwa index $REF_FASTA
 
 bowtie-build $REF_FASTA $REF_BOWTIE_INDEX
 
-#/rs/rs_grp_bbc/tools_and_references/tools/STAR-2.7.11b/source/STAR \
 STAR \
   --runThreadN 1 \
   --runMode genomeGenerate \
@@ -73,14 +71,13 @@ bwa samse $REF_FASTA ${INPUT_FASTQ}_bwa_tmp_l10 $INPUT_FASTQ > $OUTPUT_BWA_L10
 rm ${INPUT_FASTQ}_bwa_tmp_l32
 rm ${INPUT_FASTQ}_bwa_tmp_l10
 
-bowtie -n 0 -l 28 --norc --best --strata -m 1 --threads 1 -x $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M1_L28
-bowtie -n 0 -l 10 --norc --best --strata -m 1 --threads 1 -x $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M1_L10
-bowtie -n 0 -l 28 --norc --best --strata --threads 1 -x $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M0_L28
-bowtie -n 0 -l 10 --norc --best --strata --threads 1 -x $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M0_L10
+bowtie -n 0 -l 28 --norc --best --strata -m 1 -x $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M1_L28
+bowtie -n 0 -l 10 --norc --best --strata -m 1 -x $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M1_L10
+bowtie -n 0 -l 28 --norc --best -x $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M0_L28
+bowtie -n 0 -l 10 --norc --best -x $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M0_L10
 
 blastn -query $INPUT_FASTA -db $REF_BLAST_DB -outfmt 17 -out $OUTPUT_BLAST
 
-#/rs/rs_grp_bbc/tools_and_references/tools/STAR-2.7.11b/source/STAR \
 STAR \
   --runThreadN 1 \
   --genomeDir $REF_STAR_DB \
