@@ -3,6 +3,7 @@ using ArgParse
 using Glob
 using Printf
 
+
 function print_help()
     println("""
 Help Message for create_count_matrix.jl
@@ -15,6 +16,7 @@ Arguments:
   --help        Show this help message
 """)
 end
+
 
 function parse_command_line()
     args = Dict{String, String}()
@@ -39,6 +41,8 @@ function parse_command_line()
     return args
 end
 
+
+
 function main()
     args = parse_command_line()
     input_dir = args["--input_dir"]
@@ -58,14 +62,10 @@ function main()
 
         ncRNA_counts = Dict{String, Int}()
         open(sample_file, "r") do io
-            for line in Iterators.drop(eachline(io), 1)
-                seq, ncRNA_raw, count_str = split(line)
+	    for line in Iterators.drop(eachline(io), 1)
+                seq, ncRNA, count_str = split(line)
                 count = parse(Int, count_str)
-                
-                # Split on "&" and assign count to each ncRNA separately
-                for ncRNA in split(ncRNA_raw, "&")
-                    ncRNA_counts[ncRNA] = get(ncRNA_counts, ncRNA, 0) + count
-                end
+                ncRNA_counts[ncRNA] = get(ncRNA_counts, ncRNA, 0) + count
             end
         end
 
@@ -80,11 +80,10 @@ function main()
     ncRNA_set = Set{String}()
     for sample_file in alignment_files
         open(sample_file, "r") do io
-            for line in Iterators.drop(eachline(io), 1)
-                _, ncRNA_raw, _ = split(line)
-                for ncRNA in split(ncRNA_raw, "&")
-                    push!(ncRNA_set, ncRNA)
-                end
+            #for line in eachline(io)
+            for line in Iterators.drop(eachline(io),1)
+                _, ncRNA, _ = split(line)
+                push!(ncRNA_set, ncRNA)
             end
         end
     end
@@ -121,12 +120,13 @@ function main()
         end
     end
 
+    # Cleanup temp files
     for file in Glob.glob("*.uniq.ncRNAs.tmp", input_dir)
         rm(file)
     end
+
     println("Count matrix written to $output_txt")
 end
 
 main()
-
 
