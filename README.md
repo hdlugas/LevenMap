@@ -53,7 +53,7 @@ For an example of the complete recommended workflow, clone the repository, navig
 ```
 ./example.sh
 ```
-The tool levenmap has been tested and validated on Ubuntu 20.04, Ubuntu 22.04, and CentOS 7.
+The levenmap aligner has been tested and validated on Ubuntu 20.04, Ubuntu 22.04, and CentOS 7.
 
 <a name="preprocessing"></a>
 ### 3.1. Suggested preprocessing
