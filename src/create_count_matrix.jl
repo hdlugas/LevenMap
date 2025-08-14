@@ -12,7 +12,7 @@ Usage:
 
 Arguments:
   --input_dir   Path to directory containing alignment output from all samples (required)
-  --help    Show this help message
+  --help        Show this help message
 """)
 end
 
