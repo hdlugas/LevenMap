@@ -154,7 +154,7 @@ Usage:
 
 Arguments:
   --input_dir   Path to directory containing alignment output from all samples (required)
-  --help    Show this help message
+  --help        Show this help message
 ```
 
 For example, the following writes the count matrix to the directory $ALIGNMENT_OUTPUT_DIRECTORY once all agrepNestAligner alignments have been written to $ALIGNMENT_OUTPUT_DIRECTORY:
