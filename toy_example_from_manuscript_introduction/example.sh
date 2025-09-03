@@ -12,8 +12,8 @@ CURRENT_DIRECTORY=$(pwd)
 
 mkdir -p ${CURRENT_DIRECTORY}/data/alignment_output
 
-INPUT_FASTQ=${CURRENT_DIRECTORY}/data/toy_sample2.fastq
-INPUT_FASTA=${CURRENT_DIRECTORY}/data/toy_sample2.fasta
+INPUT_FASTQ=${CURRENT_DIRECTORY}/data/toy_sample.fastq
+INPUT_FASTA=${CURRENT_DIRECTORY}/data/toy_sample.fasta
 
 REF_FASTA=${CURRENT_DIRECTORY}/data/reference_ncRNAs.fasta
 REF_LEVENMAP_DB=${CURRENT_DIRECTORY}/data/reference_ncRNAs_levenmap_database
