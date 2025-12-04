@@ -98,7 +98,6 @@ open(FASTQ.Reader, fastq_file) do reader
     end
 end
 
-results_per_thread = [Vector{Tuple{String,String,Int}}() for i in 1:num_threads]
 read_list = collect(read_counts)
 unique_read_lengths = unique(map(x -> length(x[1]), read_list))
 all_references = Dict{Int, Vector{Tuple{String,String}}}()
@@ -109,6 +108,7 @@ end
 
 
 ##################################### run alignment #####################################
+#=
 Threads.@threads for i in 1:length(read_list)
     thread_id = threadid()
     (read, count) = read_list[i]
@@ -123,7 +123,7 @@ Threads.@threads for i in 1:length(read_list)
 	    min_d = min(d_fwd, d_rev)
 	    if min_d < min_dist
 	        min_dist = min_d
-    	    empty!(best_ref_names)
+    	        empty!(best_ref_names)
 	        push!(best_ref_names, ref_name)
 	    elseif min_d == min_dist
 	        push!(best_ref_names, ref_name)
@@ -131,19 +131,120 @@ Threads.@threads for i in 1:length(read_list)
     end
 
     if min_dist <= max_dist
-        # Store results in thread-local vector to avoid race
-	    ref_string = join(sort(unique(best_ref_names)), "&")
+	ref_string = join(sort(unique(best_ref_names)), "&")
         push!(results_per_thread[thread_id], (read, ref_string, count))
     end
 end
+
+# Allocate one bucket per *actual* Julia thread
+results_per_thread = [Vector{Tuple{String,String,Int}}() for _ in 1:nthreads()]
+Threads.@threads for i in 1:length(read_list)
+    tid = threadid()
+    #@assert 1 ≤ tid ≤ length(results_per_thread)
+    (read, count) = read_list[i]
+    read_revcomp = revcomp(read)
+
+    current_references = all_references[length(read)]
+    min_dist = typemax(Int)
+    best_ref_names = String[]
+    for (ref_name, ref_seq) in current_references
+        d_fwd = evaluate(Levenshtein(), read, ref_seq)
+        d_rev = evaluate(Levenshtein(), read_revcomp, ref_seq)
+        min_d = min(d_fwd, d_rev)
+        if min_d < min_dist
+            min_dist = min_d
+            empty!(best_ref_names)
+            push!(best_ref_names, ref_name)
+        elseif min_d == min_dist
+            push!(best_ref_names, ref_name)
+        end
+    end
+
+    if min_dist <= max_dist
+        ref_string = join(sort!(unique!(best_ref_names)), "&")
+        push!(results_per_thread[tid], (read, ref_string, count))
+    end
+end
+
+
+results_per_thread = [Vector{Tuple{String,String,Int}}() for _ in 1:nthreads()]
+Threads.@threads for i in 1:length(read_list)
+    tid = threadid()
+    (read, count) = read_list[i]
+    read_revcomp = revcomp(read)
+
+    current_references = get(all_references, length(read), Tuple{String,String}[])
+    isempty(current_references) && continue
+
+    min_dist = typemax(Int)
+    best_ref_names = String[]
+    for (ref_name, ref_seq) in current_references
+        d_fwd = evaluate(Levenshtein(), read, ref_seq)
+        d_rev = evaluate(Levenshtein(), read_revcomp, ref_seq)
+        min_d = min(d_fwd, d_rev)
+        if min_d < min_dist
+            min_dist = min_d
+            empty!(best_ref_names); push!(best_ref_names, ref_name)
+        elseif min_d == min_dist
+            push!(best_ref_names, ref_name)
+        end
+    end
+
+    if min_dist <= max_dist
+        ref_string = join(sort!(unique!(best_ref_names)), "&")
+        push!(results_per_thread[tid], (read, ref_string, count))
+    end
+end
+=#
+
+# --- run alignment (chunked) ---
+N = length(read_list)
+C = max(1, nthreads())
+chunk_size = ceil(Int, N / C)
+chunks = [(s:min(s+chunk_size-1, N)) for s in 1:chunk_size:N]
+
+results_per_chunk = [Vector{Tuple{String,String,Int}}() for _ in 1:length(chunks)]
+
+@sync for (chunk_idx, rng) in enumerate(chunks)
+    @spawn begin
+        localbuf = Vector{Tuple{String,String,Int}}()
+        for i in rng
+            (read, count) = read_list[i]
+            read_revcomp = revcomp(read)
+
+            current_references = get(all_references, length(read), Tuple{String,String}[])
+            isempty(current_references) && continue
+
+            min_dist = typemax(Int)
+            best_ref_names = String[]
+            for (ref_name, ref_seq) in current_references
+                d_fwd = evaluate(Levenshtein(), read, ref_seq)
+                d_rev = evaluate(Levenshtein(), read_revcomp, ref_seq)
+                min_d = min(d_fwd, d_rev)
+                if min_d < min_dist
+                    min_dist = min_d
+                    empty!(best_ref_names); push!(best_ref_names, ref_name)
+                elseif min_d == min_dist
+                    push!(best_ref_names, ref_name)
+                end
+            end
+            if min_dist <= max_dist
+                ref_string = join(sort!(unique!(best_ref_names)), "&")
+                push!(localbuf, (read, ref_string, count))
+            end
+        end
+        results_per_chunk[chunk_idx] = localbuf
+    end
+end
+
 
 
 
 ##################################### write output to disk #####################################
 open(output_file, "w") do io
     println(io, "Read\tReference\tCount")
-    for thread_results in results_per_thread
-        for (read, ref, count) in thread_results
+    for chunk in results_per_chunk
+        for (read, ref, count) in chunk
             println(io, "$read\t$ref\t$count")
         end
     end

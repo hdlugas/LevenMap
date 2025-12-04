@@ -59,7 +59,7 @@ makeblastdb -in $REF_FASTA -dbtype nucl -out $REF_BLAST_DB
 
 
 ########## align the four samples with each aligner (i.e. levenmap, BWA, Bowtie, BLAST, and STAR ##########
-julia ${CURRENT_DIRECTORY}/../src/levenmap.jl \
+julia --threads auto ${CURRENT_DIRECTORY}/../src/levenmap.jl \
   --input_fastq $INPUT_FASTQ \
   --reference $REF_LEVENMAP_DB \
   --output $OUTPUT_LEVENMAP \
