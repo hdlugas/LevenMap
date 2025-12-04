@@ -28,6 +28,7 @@ OUTPUT_BOWTIE_M1_L28=${CURRENT_DIRECTORY}/data/alignment_output/bowtie_m1_l28.sa
 OUTPUT_BOWTIE_M1_L10=${CURRENT_DIRECTORY}/data/alignment_output/bowtie_m1_l10.sam
 OUTPUT_BOWTIE_M0_L28=${CURRENT_DIRECTORY}/data/alignment_output/bowtie_m0_l28.sam
 OUTPUT_BOWTIE_M0_L10=${CURRENT_DIRECTORY}/data/alignment_output/bowtie_m0_l10.sam
+OUTPUT_BOWTIE_TMP=${CURRENT_DIRECTORY}/data/alignment_output/bowtie_tmp.sam
 OUTPUT_STAR_PREFIX=${CURRENT_DIRECTORY}/data/alignment_output/STAR
 OUTPUT_BLAST=${CURRENT_DIRECTORY}/data/alignment_output/BLAST.sam
 
@@ -75,6 +76,7 @@ bowtie -n 0 -l 28 --norc --best --strata -m 1 -x $REF_BOWTIE_INDEX $INPUT_FASTQ 
 bowtie -n 0 -l 10 --norc --best --strata -m 1 -x $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M1_L10
 bowtie -n 0 -l 28 --norc --best -x $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M0_L28
 bowtie -n 0 -l 10 --norc --best -x $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M0_L10
+bowtie -v 0 -a --best -x $REF_BOWTIE_INDEX $INPUT_FASTQ 2>&1 > $OUTPUT_BOWTIE_TMP
 
 blastn -query $INPUT_FASTA -db $REF_BLAST_DB -outfmt 17 -out $OUTPUT_BLAST
 
