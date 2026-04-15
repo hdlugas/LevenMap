@@ -11,7 +11,7 @@ mkdir -p ${CURRENT_DIRECTORY}/data/alignment_output/x1
 
 
 ########## build reference database ########## 
-julia ${CURRENT_DIRECTORY}/../src/build_reference_database.jl \
+julia ${CURRENT_DIRECTORY}/../src/BuildReferenceDatabase.jl \
   --reference ${CURRENT_DIRECTORY}/data/reference_ncRNAs.fasta \
   --output ${CURRENT_DIRECTORY}/data/reference_ncRNAs_database \
   --min_nucleotides 16 \
@@ -36,7 +36,7 @@ cutadapt \
   -o ${CURRENT_DIRECTORY}/data/sample1_post_cutadapt.fastq \
   ${CURRENT_DIRECTORY}/data/sample1_post_umi_extraction.fastq > ${CURRENT_DIRECTORY}/data/sample1_cutadapt_log_file.txt
 
-julia --threads 1 ${CURRENT_DIRECTORY}/../src/levenmap.jl \
+julia --threads 1 ${CURRENT_DIRECTORY}/../src/LevenMap.jl \
   --input_fastq ${CURRENT_DIRECTORY}/data/sample1_post_cutadapt.fastq \
   --reference ${CURRENT_DIRECTORY}/data/reference_ncRNAs_database \
   --output ${CURRENT_DIRECTORY}/data/alignment_output/x1/sample1_alignment.txt \
@@ -60,7 +60,7 @@ cutadapt \
   -o ${CURRENT_DIRECTORY}/data/sample2_post_cutadapt.fastq \
   ${CURRENT_DIRECTORY}/data/sample2_post_umi_extraction.fastq > ${CURRENT_DIRECTORY}/data/sample2_cutadapt_log_file.txt
 
-julia --threads 1 ${CURRENT_DIRECTORY}/../src/levenmap.jl \
+julia --threads 1 ${CURRENT_DIRECTORY}/../src/LevenMap.jl \
   --input_fastq ${CURRENT_DIRECTORY}/data/sample2_post_cutadapt.fastq \
   --reference ${CURRENT_DIRECTORY}/data/reference_ncRNAs_database \
   --output ${CURRENT_DIRECTORY}/data/alignment_output/x1/sample2_alignment.txt \
@@ -84,7 +84,7 @@ cutadapt \
   -o ${CURRENT_DIRECTORY}/data/sample3_post_cutadapt.fastq \
   ${CURRENT_DIRECTORY}/data/sample3_post_umi_extraction.fastq > ${CURRENT_DIRECTORY}/data/sample3_cutadapt_log_file.txt
 
-julia --threads 1 ${CURRENT_DIRECTORY}/../src/levenmap.jl \
+julia --threads 1 ${CURRENT_DIRECTORY}/../src/LevenMap.jl \
   --input_fastq ${CURRENT_DIRECTORY}/data/sample3_post_cutadapt.fastq \
   --reference ${CURRENT_DIRECTORY}/data/reference_ncRNAs_database \
   --output ${CURRENT_DIRECTORY}/data/alignment_output/x1/sample3_alignment.txt \
@@ -108,7 +108,7 @@ cutadapt \
   -o ${CURRENT_DIRECTORY}/data/sample4_post_cutadapt.fastq \
   ${CURRENT_DIRECTORY}/data/sample4_post_umi_extraction.fastq > ${CURRENT_DIRECTORY}/data/sample4_cutadapt_log_file.txt
 
-julia --threads 1 ${CURRENT_DIRECTORY}/../src/levenmap.jl \
+julia --threads 1 ${CURRENT_DIRECTORY}/../src/LevenMap.jl \
   --input_fastq ${CURRENT_DIRECTORY}/data/sample4_post_cutadapt.fastq \
   --reference ${CURRENT_DIRECTORY}/data/reference_ncRNAs_database \
   --output ${CURRENT_DIRECTORY}/data/alignment_output/x1/sample4_alignment.txt \
@@ -119,7 +119,7 @@ echo ""
 
 
 ########## consolidate alignment information to create count matrix with rows corresponding to ncRNAs and columns corresponding to samples #########
-julia ${CURRENT_DIRECTORY}/../src/create_count_matrix.jl \
+julia ${CURRENT_DIRECTORY}/../src/CreateCountMatrix.jl \
   --input_dir ${CURRENT_DIRECTORY}/data/alignment_output/x1/
 echo ""
 

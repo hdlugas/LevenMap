@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # uncomment to load dependenties if required (e.g. if you're working on an HPC cluster)
-# module load julia/1.11.3
+# module load julia
 # module load bwa
 # module load bowtie
-# module load star/2.7.11b
-# module load blast/2.10.1+
+# module load star
+# module load blast
 
 
 CURRENT_DIRECTORY=$(pwd)
@@ -16,12 +16,12 @@ INPUT_FASTQ=${CURRENT_DIRECTORY}/data/toy_sample.fastq
 INPUT_FASTA=${CURRENT_DIRECTORY}/data/toy_sample.fasta
 
 REF_FASTA=${CURRENT_DIRECTORY}/data/reference_ncRNAs.fasta
-REF_LEVENMAP_DB=${CURRENT_DIRECTORY}/data/reference_ncRNAs_levenmap_database
+REF_LEVENMAP_DB=${CURRENT_DIRECTORY}/data/reference_ncRNAs_LevenMap_database
 REF_STAR_DB=${CURRENT_DIRECTORY}/data/reference_ncRNAs_STAR_database
 REF_BLAST_DB=${CURRENT_DIRECTORY}/data/reference_ncRNAs_BLAST_database
 REF_BOWTIE_INDEX=${CURRENT_DIRECTORY}/data/reference_ncRNAs_bowtie_index
 
-OUTPUT_LEVENMAP=${CURRENT_DIRECTORY}/data/alignment_output/levenmap.txt
+OUTPUT_LEVENMAP=${CURRENT_DIRECTORY}/data/alignment_output/LevenMap.txt
 OUTPUT_BWA_L32=${CURRENT_DIRECTORY}/data/alignment_output/BWA_l32.sam
 OUTPUT_BWA_L10=${CURRENT_DIRECTORY}/data/alignment_output/BWA_l10.sam
 OUTPUT_BOWTIE_M1_L28=${CURRENT_DIRECTORY}/data/alignment_output/bowtie_m1_l28.sam
@@ -35,7 +35,7 @@ OUTPUT_BLAST=${CURRENT_DIRECTORY}/data/alignment_output/BLAST.sam
 
 
 ########## build reference database for each aligner ########## 
-julia ${CURRENT_DIRECTORY}/../src/build_reference_database.jl \
+julia ${CURRENT_DIRECTORY}/../src/BuildReferenceDatabase.jl \
   --reference $REF_FASTA \
   --output $REF_LEVENMAP_DB \
   --min_nucleotides 16 \
@@ -58,8 +58,8 @@ makeblastdb -in $REF_FASTA -dbtype nucl -out $REF_BLAST_DB
 
 
 
-########## align the four samples with each aligner (i.e. levenmap, BWA, Bowtie, BLAST, and STAR ##########
-julia --threads auto ${CURRENT_DIRECTORY}/../src/levenmap.jl \
+########## align the four samples with each aligner (i.e. LevenMap, BWA, Bowtie, BLAST, and STAR ##########
+julia --threads auto ${CURRENT_DIRECTORY}/../src/LevenMap.jl \
   --input_fastq $INPUT_FASTQ \
   --reference $REF_LEVENMAP_DB \
   --output $OUTPUT_LEVENMAP \
