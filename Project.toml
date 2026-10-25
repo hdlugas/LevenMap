@@ -1,0 +1,6 @@
+[deps]
+ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
+DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+FASTX = "c2308a5c-f048-11e8-3e8a-31650f418d12"
+Glob = "c27321d9-0574-5035-807b-f59d2c89b15c"
+StringDistances = "88034a9c-02f8-509d-84a9-84ec65e18404"

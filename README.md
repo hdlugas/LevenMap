@@ -16,27 +16,27 @@ Common bioinformatics workflows which process small RNA-sequencing data typicall
 
 <a name="installation"></a>
 ## 2. Installation
-We recommend installing Julia from source ([https://julialang.org/downloads/](https://julialang.org/downloads/)). The Julia packages required to run LevenMap are ArgParse, DataStructures, FASTX, Glob, and StringDistances. These dependencies can be installed with the Julia command:
+We recommend installing Julia from source ([https://julialang.org/downloads/](https://julialang.org/downloads/)). The Julia packages required to run LevenMap are ArgParse (v1.2.0), DataStructures (v.0.19.6), FASTX (v.2.2.0), Glob (v.1.5.0), and StringDistances (v.2.0.1). Julia v1.12.4 is the recommended version for the current software. LevenMap may very well run with different dependency versions, and the versions used in developing and testing LevenMap are listed for both reproducibility and transparency. These dependencies can be installed with the Julia command:
 ```
 using Pkg; Pkg.add(["ArgParse", "FASTX", "DataStructures", "StringDistances", "Glob"])
 ```
 
 However, if you would like to (i) extract the unique molecular identifier (UMI) sequences from reads and (ii) filter reads based on length (i.e. number of nucleotides) as is recommended by both us and Kapoor et al in "A bioinformatics approach to microRNA-sequencing analysis" ([https://www.sciencedirect.com/science/article/pii/S266591312030131X](https://www.sciencedirect.com/science/article/pii/S266591312030131X)), then umi_tools ([https://github.com/CGATOxford/UMI-tools](https://github.com/CGATOxford/UMI-tools)) and cutadapt ([https://cutadapt.readthedocs.io/en/stable/index.html](https://cutadapt.readthedocs.io/en/stable/index.html)) must also be installed. We recommend creating a conda environment with the necessary dependencies, which can be done by executing the following command once conda is installed on your system, you have downloaded this repository, and have navigated to the directory that contains the environment.yml file:
 ```
-conda env create -f environment.yml
+conda env create -f environment.yml -y
 ```
 To activate the levenmap_env conda environment, run:
 ```
 conda activate levenmap_env
 ```
-To deactivate the levenmap_env conda environement, run:
+To deactivate the levenmap_env conda environment, run:
 ```
 conda deactivate
 ```
 
 Alternatively, one can create a conda environment, activate it, and install each dependency with:
 ```
-conda create -n levenmap_env
+conda create -n levenmap_env -y
 conda activate levenmap_env
 conda config --add channels bioconda
 conda config --add channels conda-forge
@@ -49,9 +49,12 @@ Note that this assumes pip is installed on your system. For instructions on inst
 
 <a name="usage"></a>
 ## 3. Usage
-For an example of the complete recommended workflow, clone the repository, navigate to the toy_example directory, activate the levenmap_env conda environment, and run the script example.sh using:
+For an example of the complete recommended workflow, clone the repository, navigate to the LevenMap directory, activate the levenmap_env conda environment (note that this conda environment must first be installed; see Section 2), and run the script ./toy_examples/example.sh using:
 ```
-./example.sh
+git clone https://github.com/hdlugas/LevenMap
+cd LevenMap
+conda activate levenmap_env
+./toy_example/example.sh
 ```
 The LevenMap aligner has been tested and validated on Ubuntu 20.04, Ubuntu 22.04, and CentOS 7.
 
@@ -79,7 +82,7 @@ Building a reference database from the reference FASTA file greatly increases sp
 
 To view the usage instructions and parameter descriptions of the script BuildReferenceDatabase.jl, run:
 ```
-julia BuildReferenceDatabase.jl --help
+./src/julia BuildReferenceDatabase.jl --help
 ```
 
 The resulting message is:
@@ -112,7 +115,7 @@ julia BuildReferenceDatabase.jl \
 ### 3.3. Run LevenMap
 Once the reference database is constructed, LevenMap.jl can be used to align the reads of a given FASTQ file to the reference database. To view the usage instructions and parameter descriptions of the script LevenMap.jl, run:
 ```
-julia LevenMap.jl --help
+./src/julia LevenMap.jl --help
 ```
 
 The resulting message is:
@@ -142,7 +145,7 @@ julia LevenMap.jl \
 ### 3.4. Create count matrix
 Once all samples are aligned with output written to the directory $ALIGNMENT_OUTPUT_DIRECTORY, the alignment information is consolidated into a count matrix with rows corresponding to ncRNAs and columns corresponding to samples. To view the usage instructions and parameter description of the script CreateCountMatrix.jl, run:
 ```
-julia CreateCountMatrix.jl --help
+./src/julia CreateCountMatrix.jl --help
 ```
 
 The resulting message is:
