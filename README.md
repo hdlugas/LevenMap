@@ -21,8 +21,10 @@ We recommend installing Julia from source ([https://julialang.org/downloads/](ht
 using Pkg; Pkg.add(["ArgParse", "FASTX", "DataStructures", "StringDistances", "Glob"])
 ```
 
-However, if you would like to (i) extract the unique molecular identifier (UMI) sequences from reads and (ii) filter reads based on length (i.e. number of nucleotides) as is recommended by both us and Kapoor et al in "A bioinformatics approach to microRNA-sequencing analysis" ([https://www.sciencedirect.com/science/article/pii/S266591312030131X](https://www.sciencedirect.com/science/article/pii/S266591312030131X)), then umi_tools ([https://github.com/CGATOxford/UMI-tools](https://github.com/CGATOxford/UMI-tools)) and cutadapt ([https://cutadapt.readthedocs.io/en/stable/index.html](https://cutadapt.readthedocs.io/en/stable/index.html)) must also be installed. We recommend creating a conda environment with the necessary dependencies, which can be done by executing the following command once conda is installed on your system, you have downloaded this repository, and have navigated to the directory that contains the environment.yml file:
+However, if you would like to (i) extract the unique molecular identifier (UMI) sequences from reads and (ii) filter reads based on length (i.e. number of nucleotides) as is recommended by both us and Kapoor et al in "A bioinformatics approach to microRNA-sequencing analysis" ([https://www.sciencedirect.com/science/article/pii/S266591312030131X](https://www.sciencedirect.com/science/article/pii/S266591312030131X)), then umi_tools ([https://github.com/CGATOxford/UMI-tools](https://github.com/CGATOxford/UMI-tools)) and cutadapt ([https://cutadapt.readthedocs.io/en/stable/index.html](https://cutadapt.readthedocs.io/en/stable/index.html)) must also be installed. We recommend creating a conda environment with the necessary dependencies, which can be done by executing the following commands (once conda is installed on your system) which (i) clone this repository (ii) navigate to the LevenMap parent directory, and (ii) creates the conda environment levenmap_env with the necessary (non-Julia) dependencies.
 ```
+git clone https://github.com/hdlugas/LevenMap
+cd LevenMap
 conda env create -f environment.yml -y
 ```
 To activate the levenmap_env conda environment, run:
@@ -49,10 +51,8 @@ Note that this assumes pip is installed on your system. For instructions on inst
 
 <a name="usage"></a>
 ## 3. Usage
-For an example of the complete recommended workflow, clone the repository, navigate to the LevenMap directory, activate the levenmap_env conda environment (note that this conda environment must first be installed; see Section 2), and run the script ./toy_examples/example.sh using:
+For an example of the complete recommended workflow, activate the levenmap_env conda environment (note that this conda environment must first be installed; see Section 2) and run the script ./toy_examples/example.sh:
 ```
-git clone https://github.com/hdlugas/LevenMap
-cd LevenMap
 conda activate levenmap_env
 ./toy_example/example.sh
 ```
