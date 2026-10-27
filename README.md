@@ -25,7 +25,7 @@ However, if you would like to (i) extract the unique molecular identifier (UMI) 
 ```
 git clone https://github.com/hdlugas/LevenMap
 cd LevenMap
-conda env create -f environment.yml -y
+conda env create -f environment.yml
 ```
 To activate the levenmap_env conda environment, run:
 ```
@@ -51,10 +51,10 @@ Note that this assumes pip is installed on your system. For instructions on inst
 
 <a name="usage"></a>
 ## 3. Usage
-For an example of the complete recommended workflow, activate the levenmap_env conda environment (note that this conda environment must first be installed; see Section 2) and run the script ./toy_examples/example.sh:
+For an example of the complete recommended workflow, activate the levenmap_env conda environment (note that this conda environment must first be installed; see Section 2) and run the script ./toy_examples/full_LevenMap_example/run_example.sh:
 ```
 conda activate levenmap_env
-./toy_example/example.sh
+./toy_examples/full_LevenMap_example/run_example.sh
 ```
 The LevenMap aligner has been tested and validated on Ubuntu 20.04, Ubuntu 22.04, and CentOS 7.
 

@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# uncomment to load julia if required (e.g. if you're on a HPC cluster); if doing so, you may want to specify version other than 1.11.3
-# module load julia/1.11.3
+# uncomment to load julia if required (e.g. if you're on a HPC cluster); if doing so, you may want to specify version other than 1.12.4
+# module load julia/1.12.4
 
 # get path to current working directory
 CURRENT_DIRECTORY=$(pwd)
 
 # create output directory
-mkdir -p ${CURRENT_DIRECTORY}/data/alignment_output/x1
+mkdir -p ${CURRENT_DIRECTORY}/data/alignment_output
 
 
 ########## build reference database ########## 
-julia ${CURRENT_DIRECTORY}/../src/BuildReferenceDatabase.jl \
+julia ${CURRENT_DIRECTORY}/../../src/BuildReferenceDatabase.jl \
   --reference ${CURRENT_DIRECTORY}/data/reference_ncRNAs.fasta \
   --output ${CURRENT_DIRECTORY}/data/reference_ncRNAs_database \
   --min_nucleotides 16 \
@@ -36,10 +36,10 @@ cutadapt \
   -o ${CURRENT_DIRECTORY}/data/sample1_post_cutadapt.fastq \
   ${CURRENT_DIRECTORY}/data/sample1_post_umi_extraction.fastq > ${CURRENT_DIRECTORY}/data/sample1_cutadapt_log_file.txt
 
-julia --threads 1 ${CURRENT_DIRECTORY}/../src/LevenMap.jl \
+julia --threads 1 ${CURRENT_DIRECTORY}/../../src/LevenMap.jl \
   --input_fastq ${CURRENT_DIRECTORY}/data/sample1_post_cutadapt.fastq \
   --reference ${CURRENT_DIRECTORY}/data/reference_ncRNAs_database \
-  --output ${CURRENT_DIRECTORY}/data/alignment_output/x1/sample1_alignment.txt \
+  --output ${CURRENT_DIRECTORY}/data/alignment_output/sample1_alignment.txt \
   --max_dist 1 \
   --threads 1
 echo ""
@@ -60,10 +60,10 @@ cutadapt \
   -o ${CURRENT_DIRECTORY}/data/sample2_post_cutadapt.fastq \
   ${CURRENT_DIRECTORY}/data/sample2_post_umi_extraction.fastq > ${CURRENT_DIRECTORY}/data/sample2_cutadapt_log_file.txt
 
-julia --threads 1 ${CURRENT_DIRECTORY}/../src/LevenMap.jl \
+julia --threads 1 ${CURRENT_DIRECTORY}/../../src/LevenMap.jl \
   --input_fastq ${CURRENT_DIRECTORY}/data/sample2_post_cutadapt.fastq \
   --reference ${CURRENT_DIRECTORY}/data/reference_ncRNAs_database \
-  --output ${CURRENT_DIRECTORY}/data/alignment_output/x1/sample2_alignment.txt \
+  --output ${CURRENT_DIRECTORY}/data/alignment_output/sample2_alignment.txt \
   --max_dist 1 \
   --threads 1
 echo ""
@@ -84,10 +84,10 @@ cutadapt \
   -o ${CURRENT_DIRECTORY}/data/sample3_post_cutadapt.fastq \
   ${CURRENT_DIRECTORY}/data/sample3_post_umi_extraction.fastq > ${CURRENT_DIRECTORY}/data/sample3_cutadapt_log_file.txt
 
-julia --threads 1 ${CURRENT_DIRECTORY}/../src/LevenMap.jl \
+julia --threads 1 ${CURRENT_DIRECTORY}/../../src/LevenMap.jl \
   --input_fastq ${CURRENT_DIRECTORY}/data/sample3_post_cutadapt.fastq \
   --reference ${CURRENT_DIRECTORY}/data/reference_ncRNAs_database \
-  --output ${CURRENT_DIRECTORY}/data/alignment_output/x1/sample3_alignment.txt \
+  --output ${CURRENT_DIRECTORY}/data/alignment_output/sample3_alignment.txt \
   --max_dist 1 \
   --threads 1
 echo ""
@@ -108,10 +108,10 @@ cutadapt \
   -o ${CURRENT_DIRECTORY}/data/sample4_post_cutadapt.fastq \
   ${CURRENT_DIRECTORY}/data/sample4_post_umi_extraction.fastq > ${CURRENT_DIRECTORY}/data/sample4_cutadapt_log_file.txt
 
-julia --threads 1 ${CURRENT_DIRECTORY}/../src/LevenMap.jl \
+julia --threads 1 ${CURRENT_DIRECTORY}/../../src/LevenMap.jl \
   --input_fastq ${CURRENT_DIRECTORY}/data/sample4_post_cutadapt.fastq \
   --reference ${CURRENT_DIRECTORY}/data/reference_ncRNAs_database \
-  --output ${CURRENT_DIRECTORY}/data/alignment_output/x1/sample4_alignment.txt \
+  --output ${CURRENT_DIRECTORY}/data/alignment_output/sample4_alignment.txt \
   --max_dist 1 \
   --threads 1
 echo ""
@@ -119,8 +119,11 @@ echo ""
 
 
 ########## consolidate alignment information to create count matrix with rows corresponding to ncRNAs and columns corresponding to samples #########
-julia ${CURRENT_DIRECTORY}/../src/CreateCountMatrix.jl \
-  --input_dir ${CURRENT_DIRECTORY}/data/alignment_output/x1/
+julia ${CURRENT_DIRECTORY}/../../src/CreateCountMatrix.jl \
+  --input_dir ${CURRENT_DIRECTORY}/data/alignment_output
 echo ""
+
+rm ${CURRENT_DIRECTORY}/data/*cutadapt*
+rm ${CURRENT_DIRECTORY}/data/*umi*
 
 
