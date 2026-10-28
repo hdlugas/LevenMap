@@ -22,12 +22,12 @@ REF_BLAST_DB=${CURRENT_DIRECTORY}/data/reference_ncRNAs_BLAST_database
 REF_BOWTIE_INDEX=${CURRENT_DIRECTORY}/data/reference_ncRNAs_bowtie_index
 
 OUTPUT_LEVENMAP=${CURRENT_DIRECTORY}/data/alignment_output/LevenMap.txt
-OUTPUT_BWA_L32=${CURRENT_DIRECTORY}/data/alignment_output/BWA_l32.sam
-OUTPUT_BWA_L10=${CURRENT_DIRECTORY}/data/alignment_output/BWA_l10.sam
+OUTPUT_BWA_POTLA=${CURRENT_DIRECTORY}/data/alignment_output/BWA_potla.sam
 OUTPUT_BOWTIE_M1_L28=${CURRENT_DIRECTORY}/data/alignment_output/bowtie_m1_l28.sam
 OUTPUT_BOWTIE_M1_L10=${CURRENT_DIRECTORY}/data/alignment_output/bowtie_m1_l10.sam
 OUTPUT_BOWTIE_M0_L28=${CURRENT_DIRECTORY}/data/alignment_output/bowtie_m0_l28.sam
 OUTPUT_BOWTIE_M0_L10=${CURRENT_DIRECTORY}/data/alignment_output/bowtie_m0_l10.sam
+OUTPUT_BOWTIE_POTLA=${CURRENT_DIRECTORY}/data/alignment_output/bowtie_potla.sam
 OUTPUT_BOWTIE_MIRDEEP2=${CURRENT_DIRECTORY}/data/alignment_output/bowtie_mirdeep2.sam
 OUTPUT_BOWTIE_MIRGE_SET1=${CURRENT_DIRECTORY}/data/alignment_output/bowtie_mirge_set1.sam
 OUTPUT_BOWTIE_MIRGE_SET2=${CURRENT_DIRECTORY}/data/alignment_output/bowtie_mirge_set2.sam
@@ -74,17 +74,12 @@ julia --threads auto ${CURRENT_DIRECTORY}/../../src/LevenMap.jl \
   --output $OUTPUT_LEVENMAP \
   --max_dist 1
 
-bwa aln -l 32 -t 1 $REF_FASTA $INPUT_FASTQ > ${INPUT_FASTQ}_bwa_tmp_l32
-bwa aln -l 10 -t 1 $REF_FASTA $INPUT_FASTQ > ${INPUT_FASTQ}_bwa_tmp_l10
-bwa samse $REF_FASTA ${INPUT_FASTQ}_bwa_tmp_l32 $INPUT_FASTQ > $OUTPUT_BWA_L32
-bwa samse $REF_FASTA ${INPUT_FASTQ}_bwa_tmp_l10 $INPUT_FASTQ > $OUTPUT_BWA_L10
-rm ${INPUT_FASTQ}_bwa_tmp_l32
-rm ${INPUT_FASTQ}_bwa_tmp_l10
+bwa aln -l 30 -t 1 $REF_FASTA $INPUT_FASTQ > ${INPUT_FASTQ}_bwa_tmp
+bwa samse $REF_FASTA ${INPUT_FASTQ}_bwa_tmp $INPUT_FASTQ > $OUTPUT_BWA_POTLA
+rm ${INPUT_FASTQ}_bwa_tmp
 
-bowtie -n 0 -l 28 --norc --best --strata -m 1 $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M1_L28
-bowtie -n 0 -l 10 --norc --best --strata -m 1 $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M1_L10
-bowtie -n 0 -l 28 --norc --best $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M0_L28
-bowtie -n 0 -l 10 --norc --best $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_M0_L10
+
+bowtie -n 0 -l 30 --norc --best --strata -m 1 $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_POTLA
 bowtie -n 0 -e 80 -l 18 -a -m 5 --best --strata $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_MIRDEEP2
 bowtie -n 0 --norc $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_MIRGE_SET1
 bowtie -n 1 --norc $REF_BOWTIE_INDEX $INPUT_FASTQ -S $OUTPUT_BOWTIE_MIRGE_SET2
