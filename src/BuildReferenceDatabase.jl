@@ -96,6 +96,10 @@ function main()
     fasta_file = args["--reference"]
     output_dir = args["--output"]
 
+    isfile(fasta_file) || error("Reference FASTA file not found: $fasta_file")
+    max_mismatches >= 0 || error("--max_dist must be a non-negative integer (got $max_mismatches)")
+    min_nucleotides <= max_nucleotides || error("--min_nucleotides ($min_nucleotides) must be <= --max_nucleotides ($max_nucleotides)")
+
     ensure_directory(output_dir)
 
     for n_mismatches in 0:max_mismatches

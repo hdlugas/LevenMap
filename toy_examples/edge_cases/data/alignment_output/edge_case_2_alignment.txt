@@ -1,0 +1,4 @@
+Read	Reference	Count	EditDistance	Strand	NumOptimalAlignments	MultipleOptimalAlignments
+AAACAAGGGGTTCCATCGA	refeq1	1	1	+	1	false
+AAACAAGGGGTTCCATCGG	refeq1	1	0	+	1	false
+TAAACAAGGGGTTCCATCGG	refeq2	1	0	+	1	false
