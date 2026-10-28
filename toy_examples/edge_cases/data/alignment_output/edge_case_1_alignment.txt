@@ -1,6 +1,0 @@
-Read	Reference	Count	EditDistance	Strand	NumOptimalAlignments	MultipleOptimalAlignments
-TGAGGTAGTAGGTTGTATAGTA	ref_unique	1	1	+	1	false
-TGAGGTAGTAGGTTGTATAGTT	ref_unique	2	0	+	1	false
-AACTATACAACCTACTACCTCA	ref_unique	2	0	-	1	false
-GAATTCGCGCGAATTC	ref_palindrome	1	0	+/-	1	false
-AAACAAGGGGTTCCATCGG	ref_tie_1&ref_tie_2	2	1	+&+	2	true

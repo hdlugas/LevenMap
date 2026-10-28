@@ -92,5 +92,5 @@ echo -e "\nEdge case testing finished.\n"
 rm -r ${CURRENT_DIRECTORY}/data/reference_ncRNAs_database
 rm -r ${CURRENT_DIRECTORY}/data/reference_ncRNAs_for_ties_database
 rm -r ${CURRENT_DIRECTORY}/data/dummy_database
-#rm -r ${CURRENT_DIRECTORY}/data/alignment_output
+rm -r ${CURRENT_DIRECTORY}/data/alignment_output
 
