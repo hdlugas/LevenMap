@@ -26,6 +26,7 @@ julia ${CURRENT_DIRECTORY}/../../src/BuildReferenceDatabase.jl \
   --min_nucleotides 16 \
   --max_nucleotides 30 \
   --max_dist 1
+
 julia ${CURRENT_DIRECTORY}/../../src/LevenMap.jl \
   --input_fastq ${CURRENT_DIRECTORY}/data/reads_for_ties.fastq \
   --reference ${CURRENT_DIRECTORY}/data/reference_ncRNAs_for_ties_database \
@@ -85,12 +86,29 @@ julia ${CURRENT_DIRECTORY}/../../src/LevenMap.jl \
   --max_dist -1
 
 
+echo -e "\n\n\nTest case 8: run LevenMap on decompressed fastq file (expected: alignment succeeds)"
+julia ${CURRENT_DIRECTORY}/../../src/LevenMap.jl \
+  --input_fastq ${CURRENT_DIRECTORY}/data/example_decompressed.fastq \
+  --reference ${CURRENT_DIRECTORY}/data/reference_ncRNAs_database \
+  --output ${CURRENT_DIRECTORY}/data/alignment_output/edge_case_8_alignment.txt \
+  --max_dist 1
+echo -e "\nAlignment successful."
 
 
-echo -e "\nEdge case testing finished.\n"
+echo -e "\n\n\nTest case 9: run LevenMap on gzipped fastq file (expected: alignment succeeds)"
+julia ${CURRENT_DIRECTORY}/../../src/LevenMap.jl \
+  --input_fastq ${CURRENT_DIRECTORY}/data/example_compressed.fastq.gz \
+  --reference ${CURRENT_DIRECTORY}/data/reference_ncRNAs_database \
+  --output ${CURRENT_DIRECTORY}/data/alignment_output/edge_case_9_alignment.txt \
+  --max_dist 1
+echo -e "\nAlignment successful."
+
+
+echo -e "\n\n\nEdge case testing finished.\n"
 
 rm -r ${CURRENT_DIRECTORY}/data/reference_ncRNAs_database
 rm -r ${CURRENT_DIRECTORY}/data/reference_ncRNAs_for_ties_database
 rm -r ${CURRENT_DIRECTORY}/data/dummy_database
 rm -r ${CURRENT_DIRECTORY}/data/alignment_output
+
 

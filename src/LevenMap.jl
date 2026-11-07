@@ -3,6 +3,7 @@ using FASTX
 using DataStructures
 using StringDistances
 using Base.Threads
+using CodecZlib
 
 
 
@@ -15,7 +16,7 @@ Usage:
   julia levenmap.jl --input_fastq <path> --reference <path> --output <path> [--max_dist <float>] [--threads <int>]
 
 Arguments:
-  --input_fastq      Path to input FASTQ file (required)
+  --input_fastq      Path to input FASTQ file (.fastq or .fastq.gz; required)
   --reference        Path to reference database output from build_reference_database.jl (required)
   --output           Path to output TXT file (required); alignment details are also written to <output>_details.txt
   --max_dist         Maximum Levenshtein distance allowed in alignment (optional, Int, default = 1)
@@ -130,11 +131,26 @@ end
 
 
 ##################################### process read information #####################################
+#read_counts = DefaultDict{String, Int}(0)
+#open(FASTQ.Reader, fastq_file) do reader
+#    for record in reader
+#        seq = String(FASTQ.sequence(record))
+#        read_counts[seq] += 1
+#    end
+#end
+
+##################################### process read information #####################################
 read_counts = DefaultDict{String, Int}(0)
-open(FASTQ.Reader, fastq_file) do reader
-    for record in reader
-        seq = String(FASTQ.sequence(record))
-        read_counts[seq] += 1
+open(fastq_file, "r") do file
+    io = endswith(lowercase(fastq_file), ".gz") ? GzipDecompressorStream(file) : file
+    reader = FASTQ.Reader(io)
+    try
+        for record in reader
+            seq = String(FASTQ.sequence(record))
+            read_counts[seq] += 1
+        end
+    finally
+        close(reader)
     end
 end
 
